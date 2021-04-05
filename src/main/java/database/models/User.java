@@ -1,5 +1,6 @@
 package database.models;
 
+import database.Literals;
 import org.bson.Document;
 
 import java.util.Map;
@@ -22,23 +23,23 @@ public class User {
     public Document toDocument() {
         if (id == null) {
             return new Document(Map.of(
-                    "name", userName,
-                    "password", password,
-                    "age", age));
+                    Literals.FIELD_NAME, userName,
+                    Literals.FIELD_PASSWORD, password,
+                    Literals.FIELD_AGE, age));
         }
         return new Document(Map.of(
-                "_id", id,
-                "name", userName,
-                "password", password,
-                "age", age));
+                Literals.FIELD_ID, id,
+                Literals.FIELD_NAME, userName,
+                Literals.FIELD_PASSWORD, password,
+                Literals.FIELD_AGE, age));
     }
 
     public static User fromDocument(Document document) {
-        String userName = (String) document.get("name");
-        String password = (String) document.get("password");
-        Integer age = (Integer) document.get("age");
+        String userName = (String) document.get(Literals.FIELD_NAME);
+        String password = (String) document.get(Literals.FIELD_PASSWORD);
+        Integer age = (Integer) document.get(Literals.FIELD_AGE);
         User user = new User(userName, password, age);
-        user.setId((String) document.get("_id"));
+        user.setId((String) document.get(Literals.FIELD_ID));
         return user;
     }
 
