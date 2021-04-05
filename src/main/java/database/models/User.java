@@ -1,10 +1,12 @@
 package database.models;
 
 import org.bson.Document;
-import org.bson.types.ObjectId;
 
 import java.util.Map;
 
+/**
+ * Класс - описание сущности пользователя
+ */
 public class User {
     private String id;
     private String userName;

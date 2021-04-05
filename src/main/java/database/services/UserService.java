@@ -4,6 +4,9 @@ import database.dao.UserDAOImpl;
 import database.exception.NotFoundException;
 import database.models.User;
 
+/**
+ * Класс - слой для взаимодействия приложения с базой данных пользователей
+ */
 public class UserService {
     private static final UserDAOImpl userDAO = new UserDAOImpl();
 

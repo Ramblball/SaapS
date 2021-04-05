@@ -6,7 +6,16 @@ import database.models.User;
 import database.utils.MongoClientFactory;
 import org.bson.Document;
 
+/**
+ * Класс, реализующий запросы к базе данных
+ */
 public class UserDAOImpl implements DAO<User> {
+
+    /**
+     * Метод для получения коллекции, по ее названию
+     * @param name      Название коллекции
+     * @return          Коллекция
+     */
     private MongoCollection<Document> getCollection(String name) {
         return MongoClientFactory.getClientFactory().getDatabase("main").getCollection(name);
     }
