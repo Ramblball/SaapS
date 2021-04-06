@@ -1,36 +1,36 @@
 package database.dao;
 
-import database.exception.NotFoundException;
+import database.models.Entity;
+import org.bson.Document;
+import org.bson.types.ObjectId;
 
 /**
  * Интерфейс, описывающий CRUD операции для работы с базой данных
- * @param <T>   Класс сущности
  */
-public interface DAO<T> {
+public interface DAO {
 
     /**
      * Метод для поиска объекта по его _id в базе данных
-     * @param id                    _id объекта
-     * @return                      Найденный объект
-     * @throws NotFoundException    Объект не найден
+     * @param id                _id объекта
+     * @return                  Найденный объект
      */
-    T findById(String id) throws NotFoundException;
+    Document findById(ObjectId id);
 
     /**
      * Метод для сохранения объекта в базу данных
-     * @param entity                Объект для сохранения
+     * @param entity            Объект для сохранения
      */
-    void create(T entity);
+    ObjectId create(Entity entity);
 
     /**
      * Метод для обновления объекта в базе данных
-     * @param entity                Объект для обновления
+     * @param entity            Объект для обновления
      */
-    void update(T entity);
+    void update(Entity entity);
 
     /**
      * Метод для удаления объекта из базы данных
-     * @param entity                Объект для удаления
+     * @param id                _id объекта
      */
-    void remove(T entity);
+    void remove(ObjectId id);
 }

@@ -4,6 +4,6 @@ import servers.chat.Chat;
 public class Main {
     public static void main(String[] args) {
         new Chat().start();
-	MongoClientFactory.getClientFactory();
+	    MongoClientFactory.getClientFactory();
     }
 }

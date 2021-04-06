@@ -1,5 +1,6 @@
 package database.utils;
 
+import com.mongodb.ConnectionString;
 import com.mongodb.MongoClientSettings;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
@@ -18,7 +19,9 @@ public class MongoClientFactory {
      */
     public static MongoClient getClientFactory() {
         if (client == null) {
-            MongoClientSettings settings = MongoClientSettings.builder().build();
+            MongoClientSettings settings = MongoClientSettings.builder()
+                    .applyConnectionString(new ConnectionString("mongodb://127.0.0.1:27017"))
+                    .build();
             client = MongoClients.create(settings);
         }
 
