@@ -8,12 +8,22 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Класс - описание сущности сообщения
+ */
 public class Message implements Entity {
     private ObjectId id;
     private ObjectId sender;
     private ObjectId receiver;
     private String message;
     private Date timestamp;
+
+    public Message(String sender, String receiver, String message) {
+        this.sender = new ObjectId(sender);
+        this.receiver = new ObjectId(receiver);
+        this.message = message;
+        this.timestamp = new Date();
+    }
 
     public Message(Document document) {
         sender = document.getObjectId(Literals.FIELD_SENDER);
