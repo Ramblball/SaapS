@@ -1,5 +1,8 @@
+
+import database.utils.MongoClientFactory;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
 import servers.chat.Chat;
 
 public class Main {
@@ -7,7 +10,7 @@ public class Main {
 
     public static void main(String[] args) {
         new Chat().start();
-
+	      MongoClientFactory.getClientFactory();
         logger.debug("Server started");
     }
 }
