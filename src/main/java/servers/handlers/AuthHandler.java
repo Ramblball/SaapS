@@ -8,6 +8,9 @@ import org.bson.types.ObjectId;
 
 import java.io.IOException;
 
+/**
+ * Класс обработчик запроса на авторизацию пользователя
+ */
 @Handler(path = "/authorize")
 public class AuthHandler implements HttpHandler {
 

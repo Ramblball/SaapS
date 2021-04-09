@@ -12,15 +12,20 @@ import servers.handlers.Handler;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.net.InetSocketAddress;
-import java.util.Optional;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
 
+/**
+ * Класс запуска основного HTTP сервера приложения
+ */
 public class MainServer {
     private static final Logger logger = LogManager.getLogger(MainServer.class);
 
     HttpServer server;
 
+    /**
+     * Метод для запуска сервера
+     */
     public void start() {
         try {
             ThreadPoolExecutor poolExecutor = (ThreadPoolExecutor) Executors.newFixedThreadPool(20);
@@ -36,10 +41,18 @@ public class MainServer {
         }
     }
 
+    /**
+     * Метод для остановки сервера
+     */
     public void close() {
         server.stop(0);
     }
 
+    /**
+     * Метод добавления обработчиков запросов к серверу
+     * Ищет классы обработчики по анотации
+     * @throws HandlerAnnotationException       Ошибка при приведении аннотированного класса к обработчику
+     */
     private void setHandlers() throws HandlerAnnotationException {
         Reflections reflections = new Reflections("servers.handlers");
         for (Class<?> clazz : reflections.getTypesAnnotatedWith(Handler.class)) {
@@ -49,11 +62,17 @@ public class MainServer {
         }
     }
 
+    /**
+     * Метод для создания экземпляра обработчика из аннотированого класса
+     * @param clazz                             Аннотированный класс
+     * @return                                  Экземпляр обработчика
+     * @throws HandlerAnnotationException       Ошибка при приведении аннотированного класса к обработчику
+     */
     private static HttpHandler toHandler(Class<?> clazz) throws HandlerAnnotationException {
         try {
-            return Optional.of((HttpHandler) clazz
+            return (HttpHandler) clazz
                     .getConstructor()
-                    .newInstance()).get();
+                    .newInstance();
         } catch (ClassCastException |
                 InstantiationException |
                 IllegalAccessException |

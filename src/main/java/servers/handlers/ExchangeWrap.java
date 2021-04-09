@@ -8,6 +8,9 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 
+/**
+ * Класс - обертка для объекта запроса
+ */
 public class ExchangeWrap {
     private final HttpExchange exchange;
     private final BufferedReader reader;
@@ -19,6 +22,11 @@ public class ExchangeWrap {
         writer = exchange.getResponseBody();
     }
 
+    /**
+     * Метод для получения данных из тела запроса
+     * @return                  Тело запроса, преобразованное в Document
+     * @throws IOException      Ошибка при работе в потоком ввода
+     */
     public Document getRequest() throws IOException {
         StringBuilder builder = new StringBuilder();
         while (reader.ready()) {
@@ -27,6 +35,12 @@ public class ExchangeWrap {
         return Document.parse(builder.toString());
     }
 
+    /**
+     * Метод для отправки данных в ответ на запрос
+     * @param response          Передаваемое сообщение
+     * @param code              Статус код ответа
+     * @throws IOException      Ошибка при работе с потоком вывода
+     */
     public void sendResponse(String response, int code) throws IOException {
         exchange.getResponseHeaders().add("Content-Type", "application/json");
         exchange.sendResponseHeaders(code, response.length());
@@ -34,6 +48,10 @@ public class ExchangeWrap {
         writer.flush();
     }
 
+    /**
+     * Метод для закрытия потоков и завершения жизни объекта запроса
+     * @throws IOException      Ошибка при закрытии потоков
+     */
     public void close() throws IOException {
         reader.close();
         writer.close();

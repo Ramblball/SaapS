@@ -7,6 +7,9 @@ import database.services.UserService;
 
 import java.io.*;
 
+/**
+ * Класс обработчик запроса на регистрацию пользователя
+ */
 @Handler(path = "/registration")
 public class RegistrationHandler implements HttpHandler {
 
