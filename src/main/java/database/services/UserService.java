@@ -13,7 +13,7 @@ public class UserService implements Service<User>{
     private static final DAOImpl userDao = new UserDAO();
 
     public User findById(ObjectId id) {
-        return new User(userDao.findById(id));
+        return User.fromDocument(userDao.findById(id));
     }
 
     public User create(User entity) {

@@ -16,7 +16,7 @@ public class Chat extends Thread{
     @Override
     public void run() {
         try {
-            server = new ServerSocket(8080);
+            server = new ServerSocket(8081);
 
             while (true) {
                 Socket socket = server.accept();
@@ -51,7 +51,6 @@ public class Chat extends Thread{
         private Integer userID;
         private String userName;
 
-        //TODO: Подгружать последние сообщения из бд и отправлять юзеру
         public Connection(Socket socket) {
             this.socket = socket;
 

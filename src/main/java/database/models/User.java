@@ -27,13 +27,22 @@ public class User implements Entity{
         return new Document(map);
     }
 
-    public User(Document document) {
-        this.userName = document.getString(Literals.FIELD_NAME);
-        this.password = document.getString(Literals.FIELD_PASSWORD);
-        this.age = document.getDouble(Literals.FIELD_AGE);
+    public static User fromDocument(Document document) {
+        User user =  new User(
+                document.getString(Literals.FIELD_NAME),
+                document.getString(Literals.FIELD_PASSWORD),
+                document.getDouble(Literals.FIELD_AGE)
+        );
         if (document.containsKey(Literals.FIELD_ID)) {
-            this.id = document.getObjectId(Literals.FIELD_ID);
+            user.setId(document.getObjectId(Literals.FIELD_ID));
         }
+        return user;
+    }
+
+    private User(String name, String password, Double age) {
+        this.userName = name;
+        this.password = password;
+        this.age = age;
     }
 
     public void setId(ObjectId  id) {
