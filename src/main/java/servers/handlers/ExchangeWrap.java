@@ -2,11 +2,13 @@ package servers.handlers;
 
 import com.sun.net.httpserver.HttpExchange;
 import org.bson.Document;
+import org.apache.logging.log4j.Logger;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.util.Arrays;
 
 /**
  * Класс - обертка для объекта запроса
@@ -20,6 +22,20 @@ public class ExchangeWrap {
         this.exchange = exchange;
         reader = new BufferedReader(new InputStreamReader(exchange.getRequestBody()));
         writer = exchange.getResponseBody();
+    }
+
+    /**
+     * Закрывает соединение, если метод не поддерживается
+     * @param allowedMethods    Список, поддерживаемых методов
+     * @throws IOException      Ошибка при закрытии потоков
+     */
+    public void closeIfNotAllowed(String... allowedMethods) throws IOException {
+        if (Arrays.stream(allowedMethods).noneMatch(
+                (method) -> exchange.getRequestMethod().equals(method)
+        )) {
+            this.sendResponse("Method not allowed", 405);
+            close();
+        }
     }
 
     /**
