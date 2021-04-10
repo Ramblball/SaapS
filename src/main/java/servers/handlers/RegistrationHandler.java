@@ -7,13 +7,14 @@ import database.services.UserService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.bson.Document;
+import servers.Literals;
 
 import java.io.*;
 
 /**
  * Класс обработчик запроса на регистрацию пользователя
  */
-@Handler(path = "/registration")
+@Handler(path = Literals.REGISTRATION)
 public class RegistrationHandler implements HttpHandler {
     private static final Logger logger = LogManager.getLogger(RegistrationHandler.class);
 
@@ -21,9 +22,9 @@ public class RegistrationHandler implements HttpHandler {
     public void handle(HttpExchange exchange) throws IOException {
         ExchangeWrapper wExchange = new ExchangeWrapper(exchange);
         UserService service = new UserService();
-        wExchange.closeIfNotAllowed("POST");
+        wExchange.closeIfNotAllowed(Literals.METHOD_POST);
 
-        if (exchange.getRequestMethod().equals("POST")) {
+        if (exchange.getRequestMethod().equals(Literals.METHOD_POST)) {
             Document request = wExchange.getRequest();
             logger.debug(exchange.getRequestURI().getPath() +
                     " ( " + exchange.getRequestMethod() + " ) -> " +

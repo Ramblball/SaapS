@@ -3,6 +3,7 @@ package servers.handlers;
 import com.sun.net.httpserver.HttpExchange;
 import org.bson.Document;
 import org.apache.logging.log4j.Logger;
+import servers.Literals;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -33,7 +34,7 @@ public class ExchangeWrapper {
         if (Arrays.stream(allowedMethods).noneMatch(
                 (method) -> exchange.getRequestMethod().equals(method)
         )) {
-            this.sendResponse("Method not allowed", 405);
+            this.sendResponse(Literals.MESSAGE_405, 405);
             close();
         }
     }
@@ -58,7 +59,7 @@ public class ExchangeWrapper {
      * @throws IOException      Ошибка при работе с потоком вывода
      */
     public void sendResponse(String response, int code) throws IOException {
-        exchange.getResponseHeaders().add("Content-Type", "application/json");
+        exchange.getResponseHeaders().add(Literals.CONTENT_TYPE, Literals.APPLICATION_JSON);
         exchange.sendResponseHeaders(code, response.length());
         writer.write(response.getBytes());
         writer.flush();
