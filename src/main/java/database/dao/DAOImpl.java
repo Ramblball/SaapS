@@ -1,5 +1,6 @@
 package database.dao;
 
+import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import database.Literals;
 import database.models.Entity;
@@ -20,9 +21,14 @@ public abstract class DAOImpl implements DAO {
      */
     protected abstract MongoCollection<Document> getCollection();
 
-    public Document findById(ObjectId id){
+    public Document findById(ObjectId id) {
         MongoCollection<Document> collection = getCollection();
         return collection.find(new Document(Literals.FIELD_ID, id)).first();
+    }
+
+    public FindIterable<Document> find(Document filter) {
+        MongoCollection<Document> collection = getCollection();
+        return collection.find(filter);
     }
 
     public ObjectId create(Entity entity) {

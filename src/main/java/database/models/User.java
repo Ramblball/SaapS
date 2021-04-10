@@ -53,27 +53,7 @@ public class User implements Entity{
         return id;
     }
 
-    public String getUserName() {
-        return userName;
-    }
-
-    public void setUserName(String userName) {
-        this.userName = userName;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public Double getAge() {
-        return age;
-    }
-
-    public void setAge(Double age) {
-        this.age = age;
+    public boolean checkPassword(String password) {
+        return this.password.equals(password);
     }
 }
