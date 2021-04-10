@@ -20,7 +20,7 @@ public class AuthHandler implements HttpHandler {
 
     @Override
     public void handle(HttpExchange exchange) throws IOException {
-        ExchangeWrap wExchange = new ExchangeWrap(exchange);
+        ExchangeWrapper wExchange = new ExchangeWrapper(exchange);
         UserService service = new UserService();
         wExchange.closeIfNotAllowed("GET");
 
@@ -29,9 +29,14 @@ public class AuthHandler implements HttpHandler {
             logger.debug(exchange.getRequestURI().getPath() +
                     " ( " + exchange.getRequestMethod() + " ) -> " +
                     request.toJson());
-            User user = service.findById(new ObjectId(request.getString("_id")));
-            String response = user.toDocument().toJson();
-            wExchange.sendResponse(response, 200);
+            User user = service.findByName(request.getString("name"));
+            if (user.checkPassword(request.getString("password"))) {
+                String response = user.toDocument().toJson();
+                wExchange.sendResponse(response, 200);
+            } else {
+                String response = "No no no";
+                wExchange.sendResponse(response, 200);
+            }
         }
         wExchange.close();
     }

@@ -19,7 +19,7 @@ public class RegistrationHandler implements HttpHandler {
 
     @Override
     public void handle(HttpExchange exchange) throws IOException {
-        ExchangeWrap wExchange = new ExchangeWrap(exchange);
+        ExchangeWrapper wExchange = new ExchangeWrapper(exchange);
         UserService service = new UserService();
         wExchange.closeIfNotAllowed("POST");
 
