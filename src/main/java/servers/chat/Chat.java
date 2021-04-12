@@ -12,17 +12,16 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.*;
 
-public class Chat extends Thread {
+public class Chat {
     private static final MessageService messages = new MessageService();
 
-    private final Map<String, Connection> connections =
+    private static final Map<String, Connection> connections =
             Collections.synchronizedMap(new HashMap<>());
-    private ServerSocket server;
+    private static ServerSocket server;
 
-    @Override
-    public void run() {
+    public static void main(String[] args) {
         try {
-            server = new ServerSocket(8081);
+            server = new ServerSocket(Integer.parseInt(System.getenv("CHAT_PORT")));
 
             while (true) {
                 Socket socket = server.accept();
@@ -36,7 +35,7 @@ public class Chat extends Thread {
         }
     }
 
-    private void closeAll() {
+    private static void closeAll() {
         try {
             server.close();
 
@@ -50,7 +49,7 @@ public class Chat extends Thread {
         }
     }
 
-    private class Connection extends Thread {
+    private static class Connection extends Thread {
         private BufferedReader in;
         private PrintWriter out;
         private final Socket socket;
