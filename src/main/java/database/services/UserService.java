@@ -1,8 +1,10 @@
 package database.services;
 
+import database.Literals;
 import database.dao.DAOImpl;
 import database.dao.UserDAO;
 import database.models.User;
+import org.bson.Document;
 import org.bson.types.ObjectId;
 
 /**
@@ -13,7 +15,7 @@ public class UserService implements Service<User>{
     private static final DAOImpl userDao = new UserDAO();
 
     public User findById(ObjectId id) {
-        return new User(userDao.findById(id));
+        return User.fromDocument(userDao.findById(id));
     }
 
     public User create(User entity) {
@@ -27,5 +29,17 @@ public class UserService implements Service<User>{
 
     public void remove(User entity) {
         userDao.remove(entity.getId());
+    }
+
+    /**
+     * Метод для поиска пользователя по имени
+     * @param name      Имя пользователя
+     * @return          Найденный пользователь
+     */
+    public User findByName(String name) {
+        Document filter = new Document(Literals.FIELD_NAME, name);
+        Document document = userDao.find(filter).first();
+        assert document != null;
+        return User.fromDocument(document);
     }
 }

@@ -22,7 +22,7 @@ public class Chat extends Thread {
     @Override
     public void run() {
         try {
-            server = new ServerSocket(8080);
+            server = new ServerSocket(8081);
 
             while (true) {
                 Socket socket = server.accept();
