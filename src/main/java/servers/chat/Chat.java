@@ -1,5 +1,9 @@
 package servers.chat;
 
+import database.models.Message;
+import database.services.MessageService;
+import org.bson.Document;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -8,9 +12,11 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.*;
 
-public class Chat extends Thread{
-    private final Map<Integer, Connection> connections =
-        Collections.synchronizedMap(new HashMap<>());
+public class Chat extends Thread {
+    private static final MessageService messages = new MessageService();
+
+    private final Map<String, Connection> connections =
+            Collections.synchronizedMap(new HashMap<>());
     private ServerSocket server;
 
     @Override
@@ -48,7 +54,7 @@ public class Chat extends Thread{
         private BufferedReader in;
         private PrintWriter out;
         private final Socket socket;
-        private Integer userID;
+        private String userID;
         private String userName;
 
         public Connection(Socket socket) {
@@ -58,10 +64,6 @@ public class Chat extends Thread{
                 in = new BufferedReader(new InputStreamReader(
                         socket.getInputStream()));
                 out = new PrintWriter(socket.getOutputStream(), true);
-                String[] initData = this.in.readLine().split("#:#");
-                this.userName = initData[1];
-                this.userID = Integer.parseInt(initData[0]);
-                connections.put(userID, this);
                 this.start();
             } catch (IOException e) {
                 e.printStackTrace();
@@ -75,21 +77,23 @@ public class Chat extends Thread{
                 while (true) {
                     String[] data = in.readLine().split("#:#");
                     switch (data[0]) {
-                        case "exit":
-                            return;
-                        case "all":
+                        case "init":
+                            this.userName = data[1];
+                            this.userID = data[0];
+                            connections.put(userID, this);
+                            break;
+                        case "msg":
                             synchronized (connections) {
-                                for (Connection connection : connections.values()) {
-                                    connection.out.println(userName + ": " + data[1]);
+                                Message message = new Message(userID, data[1], data[2]);
+                                messages.create(message);
+                                if (connections.containsKey(data[1])) {
+                                    Connection messageReceiver = connections.get(data[1]);
+                                    messageReceiver.out.println(data[2]);
                                 }
                             }
                             break;
-                        case "msg":
-                            //TODO: Если пользователь не соединен, сохранять сообщение в бд
-                            synchronized (connections) {
-                                Connection messageReceiver = connections.get(Integer.parseInt(data[1]));
-                                messageReceiver.out.println(data[2]);
-                            }
+                        case "exit":
+                            return;
                     }
                 }
             } catch (IOException e) {
