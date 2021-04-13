@@ -2,6 +2,8 @@ package servers.chat;
 
 import database.models.Message;
 import database.services.MessageService;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.bson.Document;
 
 import java.io.BufferedReader;
@@ -13,6 +15,7 @@ import java.net.Socket;
 import java.util.*;
 
 public class Chat {
+    private static final Logger logger = LogManager.getLogger(Chat.class);
     private static final MessageService messages = new MessageService();
 
     private static final Map<String, Connection> connections =
@@ -23,6 +26,7 @@ public class Chat {
         try {
             server = new ServerSocket(Integer.parseInt(System.getenv("CHAT_PORT")));
 
+            logger.debug("Chat server started");
             while (true) {
                 Socket socket = server.accept();
 

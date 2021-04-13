@@ -29,10 +29,11 @@ public class MainServer {
     public static void main(String[] args) {
         try {
             ThreadPoolExecutor poolExecutor = (ThreadPoolExecutor) Executors.newFixedThreadPool(20);
-            server = HttpServer.create(new InetSocketAddress(Integer.parseInt(System.getenv("MAIN_PORT"))), 0);
+            server = HttpServer.create(new InetSocketAddress(Integer.parseInt(System.getenv("PORT"))), 0);
             setHandlers();
             server.setExecutor(poolExecutor);
             server.start();
+            logger.debug("Main server started");
         } catch (IOException | HandlerAnnotationException ex) {
             logger.debug(ex.getMessage(), ex);
             if (server != null) {
