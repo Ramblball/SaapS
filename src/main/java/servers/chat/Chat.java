@@ -4,7 +4,6 @@ import database.models.Message;
 import database.services.MessageService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.bson.Document;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -14,15 +13,16 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.*;
 
-public class Chat {
+public class Chat extends Thread{
     private static final Logger logger = LogManager.getLogger(Chat.class);
     private static final MessageService messages = new MessageService();
 
-    private static final Map<String, Connection> connections =
+    private final Map<String, Connection> connections =
             Collections.synchronizedMap(new HashMap<>());
-    private static ServerSocket server;
+    private ServerSocket server;
 
-    public static void main(String[] args) {
+    @Override
+    public void run() {
         try {
             server = new ServerSocket(Integer.parseInt(System.getenv("CHAT_PORT")));
 
@@ -39,7 +39,7 @@ public class Chat {
         }
     }
 
-    private static void closeAll() {
+    private void closeAll() {
         try {
             server.close();
 
@@ -53,7 +53,7 @@ public class Chat {
         }
     }
 
-    private static class Connection extends Thread {
+    private class Connection extends Thread {
         private BufferedReader in;
         private PrintWriter out;
         private final Socket socket;

@@ -8,9 +8,11 @@ public class Main {
     private static final Logger logger = LogManager.getLogger(Main.class);
 
     public static void main(String[] args) {
-        MainServer.main(new String[0]);
+        MainServer mainServer = new MainServer();
+        Chat chat = new Chat();
+        mainServer.start();
         logger.debug("Main server started");
-        Chat.main(new String[0]);
+        chat.start();
         logger.debug("Chat server started");
     }
 }

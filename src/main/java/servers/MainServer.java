@@ -21,12 +21,12 @@ import java.util.concurrent.ThreadPoolExecutor;
 public class MainServer {
     private static final Logger logger = LogManager.getLogger(MainServer.class);
 
-    private static HttpServer server;
+    private HttpServer server;
 
     /**
      * Метод для запуска сервера
      */
-    public static void main(String[] args) {
+    public void start() {
         try {
             ThreadPoolExecutor poolExecutor = (ThreadPoolExecutor) Executors.newFixedThreadPool(20);
             server = HttpServer.create(new InetSocketAddress(Integer.parseInt(System.getenv("PORT"))), 0);
@@ -45,7 +45,7 @@ public class MainServer {
     /**
      * Метод для остановки сервера
      */
-    public static void close() {
+    public void close() {
         server.stop(0);
     }
 
@@ -54,7 +54,7 @@ public class MainServer {
      * Ищет классы обработчики по анотации
      * @throws HandlerAnnotationException       Ошибка при приведении аннотированного класса к обработчику
      */
-    private static void setHandlers() throws HandlerAnnotationException {
+    private void setHandlers() throws HandlerAnnotationException {
         Reflections reflections = new Reflections("servers.handlers");
         for (Class<?> clazz : reflections.getTypesAnnotatedWith(Handler.class)) {
             String path = clazz.getAnnotation(Handler.class).path();
