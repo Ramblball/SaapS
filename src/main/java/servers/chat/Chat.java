@@ -2,7 +2,8 @@ package servers.chat;
 
 import database.models.Message;
 import database.services.MessageService;
-import org.bson.Document;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -12,7 +13,8 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.*;
 
-public class Chat extends Thread {
+public class Chat extends Thread{
+    private static final Logger logger = LogManager.getLogger(Chat.class);
     private static final MessageService messages = new MessageService();
 
     private final Map<String, Connection> connections =
@@ -22,8 +24,9 @@ public class Chat extends Thread {
     @Override
     public void run() {
         try {
-            server = new ServerSocket(8081);
+            server = new ServerSocket(Integer.parseInt(System.getenv("CHAT_PORT")));
 
+            logger.debug("Chat server started");
             while (true) {
                 Socket socket = server.accept();
 

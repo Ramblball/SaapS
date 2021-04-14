@@ -21,7 +21,7 @@ import java.util.concurrent.ThreadPoolExecutor;
 public class MainServer {
     private static final Logger logger = LogManager.getLogger(MainServer.class);
 
-    HttpServer server;
+    private HttpServer server;
 
     /**
      * Метод для запуска сервера
@@ -29,10 +29,11 @@ public class MainServer {
     public void start() {
         try {
             ThreadPoolExecutor poolExecutor = (ThreadPoolExecutor) Executors.newFixedThreadPool(20);
-            server = HttpServer.create(new InetSocketAddress("127.0.0.1", 3000), 0);
+            server = HttpServer.create(new InetSocketAddress(Integer.parseInt(System.getenv("PORT"))), 0);
             setHandlers();
             server.setExecutor(poolExecutor);
             server.start();
+            logger.debug("Main server started");
         } catch (IOException | HandlerAnnotationException ex) {
             logger.debug(ex.getMessage(), ex);
             if (server != null) {

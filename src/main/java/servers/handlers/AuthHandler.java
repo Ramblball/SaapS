@@ -7,7 +7,6 @@ import database.services.UserService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.bson.Document;
-import org.bson.types.ObjectId;
 import servers.Literals;
 
 import java.io.IOException;

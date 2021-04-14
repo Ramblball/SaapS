@@ -20,7 +20,7 @@ public class MongoClientFactory {
     public static MongoClient getClientFactory() {
         if (client == null) {
             MongoClientSettings settings = MongoClientSettings.builder()
-                    .applyConnectionString(new ConnectionString("mongodb://127.0.0.1:27017"))
+                    .applyConnectionString(new ConnectionString(System.getenv("MONGO_CONNECT")))
                     .build();
             client = MongoClients.create(settings);
         }
