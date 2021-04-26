@@ -1,3 +1,4 @@
+import database.utils.MongoClientFactory;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -14,5 +15,6 @@ public class Main {
         logger.debug("Main server started");
         chat.start();
         logger.debug("Chat server started");
+        MongoClientFactory.getClientFactory();
     }
 }

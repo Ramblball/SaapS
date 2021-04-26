@@ -22,7 +22,7 @@ public class User implements Entity{
         map.put(Literals.FIELD_PASSWORD, password);
         map.put(Literals.FIELD_AGE, age);
         if (id != null) {
-            map.put(Literals.FIELD_ID, id);
+            map.put(Literals.FIELD_ID, id.toString());
         }
         return new Document(map);
     }

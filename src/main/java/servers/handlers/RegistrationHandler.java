@@ -30,7 +30,9 @@ public class RegistrationHandler implements HttpHandler {
                     " ( " + exchange.getRequestMethod() + " ) -> " +
                     request.toJson());
             User user = service.create(User.fromDocument(request));
-            String response = user.toDocument().toJson();
+            Document clearUser = user.toDocument();
+            clearUser.remove(Literals.KEY_PASSWORD);
+            String response = clearUser.toJson();
             wExchange.sendResponse(response, 200);
         }
         wExchange.close();

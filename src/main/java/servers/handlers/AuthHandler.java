@@ -22,19 +22,21 @@ public class AuthHandler implements HttpHandler {
     public void handle(HttpExchange exchange) throws IOException {
         ExchangeWrapper wExchange = new ExchangeWrapper(exchange);
         UserService service = new UserService();
-        wExchange.closeIfNotAllowed(Literals.METHOD_GET);
+        wExchange.closeIfNotAllowed(Literals.METHOD_POST);
 
-        if (exchange.getRequestMethod().equals(Literals.METHOD_GET)) {
+        if (exchange.getRequestMethod().equals(Literals.METHOD_POST)) {
             Document request = wExchange.getRequest();
             logger.debug(exchange.getRequestURI().getPath() +
                     " ( " + exchange.getRequestMethod() + " ) -> " +
                     request.toJson());
             User user = service.findByName(request.getString(Literals.KEY_NAME));
             if (user.checkPassword(request.getString(Literals.KEY_PASSWORD))) {
-                String response = user.toDocument().toJson();
+                Document clearUser = user.toDocument();
+                clearUser.remove(Literals.KEY_PASSWORD);
+                String response = clearUser.toJson();
                 wExchange.sendResponse(response, 200);
             } else {
-                wExchange.sendResponse(Literals.WRONG_PASS, 500);
+                wExchange.sendResponse(Literals.WRONG_PASS, 400);
             }
         }
         wExchange.close();
