@@ -24,12 +24,12 @@ public class Chat extends Thread{
     @Override
     public void run() {
         try {
-            server = new ServerSocket(Integer.parseInt(System.getenv("CHAT_PORT")));
+            int port = Integer.parseInt(System.getenv("CHAT_PORT"));
+            server = new ServerSocket(port);
 
-            logger.debug("Chat server started");
+            logger.debug("Chat server started on port: " + port);
             while (true) {
                 Socket socket = server.accept();
-
                 new Connection(socket);
             }
         } catch (IOException e) {
@@ -78,20 +78,23 @@ public class Chat extends Thread{
         public void run() {
             try {
                 while (true) {
-                    String[] data = in.readLine().split("#:#");
+                    String revived = in.readLine();
+                    logger.debug(revived);
+                    String[] data = revived.split("#:#");
                     switch (data[0]) {
                         case "init":
                             this.userName = data[1];
-                            this.userID = data[0];
+                            this.userID = data[2];
                             connections.put(userID, this);
                             break;
                         case "msg":
                             synchronized (connections) {
                                 Message message = new Message(userID, data[1], data[2]);
+                                logger.debug(message.toDocument().toJson());
                                 messages.create(message);
                                 if (connections.containsKey(data[1])) {
                                     Connection messageReceiver = connections.get(data[1]);
-                                    messageReceiver.out.println(data[2]);
+                                    messageReceiver.out.println(messageReceiver.userID + "#:#" + data[2]);
                                 }
                             }
                             break;
