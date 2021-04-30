@@ -78,9 +78,9 @@ public class Chat extends Thread{
         public void run() {
             try {
                 while (true) {
-                    String revived = in.readLine();
-                    logger.debug(revived);
-                    String[] data = revived.split("#:#");
+                    String received = in.readLine();
+                    logger.info(received);
+                    String[] data = received.split("#:#");
                     switch (data[0]) {
                         case "init":
                             this.userName = data[1];
