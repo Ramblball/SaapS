@@ -12,9 +12,9 @@ import java.util.Map;
  */
 public class User implements Entity{
     private ObjectId id;
-    private String userName;
-    private String password;
-    private Double age;
+    private final String userName;
+    private final String password;
+    private final Double age;
 
     public Document toDocument() {
         Map<String, Object> map = new HashMap<>();
