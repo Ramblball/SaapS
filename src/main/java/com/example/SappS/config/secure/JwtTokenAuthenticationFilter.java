@@ -2,7 +2,9 @@ package com.example.SappS.config.secure;
 
 import com.example.SappS.database.services.UserService;
 import io.jsonwebtoken.Claims;
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -18,11 +20,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 @AllArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class JwtTokenAuthenticationFilter extends OncePerRequestFilter {
 
-    private final JwtConfig jwtConfig;
-    private JwtTokenProvider jwtTokenProvider;
-    private UserService userService;
+    JwtConfig jwtConfig;
+    JwtTokenProvider jwtTokenProvider;
+    UserService userService;
 
 
     @Override
@@ -45,7 +48,7 @@ public class JwtTokenAuthenticationFilter extends OncePerRequestFilter {
                     userService.findByName(username)
                             .map(user -> {
                                 List<SimpleGrantedAuthority> authorities = new ArrayList<>();
-                                authorities.add(new SimpleGrantedAuthority("user"));
+                                authorities.add(new SimpleGrantedAuthority("USER"));
                                 UsernamePasswordAuthenticationToken authenticationToken =
                                         new UsernamePasswordAuthenticationToken(user, null, authorities);
                                 authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(httpServletRequest));

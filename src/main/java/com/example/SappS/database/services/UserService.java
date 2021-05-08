@@ -4,6 +4,9 @@ import com.example.SappS.config.secure.JwtTokenProvider;
 import com.example.SappS.database.exceptions.AlreadyExistException;
 import com.example.SappS.database.models.User;
 import com.example.SappS.database.repositories.UserRepository;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -13,14 +16,15 @@ import org.springframework.stereotype.Service;
 import java.util.Optional;
 
 @Service
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class UserService {
 
     @Autowired
-    private AuthenticationManager authenticationManager;
+    AuthenticationManager authenticationManager;
     @Autowired
-    private JwtTokenProvider jwtTokenProvider;
+    JwtTokenProvider jwtTokenProvider;
     @Autowired
-    private UserRepository userRepository;
+    UserRepository userRepository;
 
     public String login(String username, String password) {
         Authentication authentication = authenticationManager

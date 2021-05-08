@@ -1,5 +1,6 @@
 package com.example.SappS.controllers;
 
+import com.example.SappS.controllers.payload.UserResponse;
 import com.example.SappS.database.models.User;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -15,9 +16,9 @@ import org.springframework.web.bind.annotation.RestController;
 public class UserController {
 
     @GetMapping(value = "/info", produces = MediaType.APPLICATION_JSON_VALUE)
-    @PreAuthorize("hasRole('user')")
+    @PreAuthorize("hasRole('USER')")
     @ResponseStatus(HttpStatus.OK)
-    private User getCurrentUser(@AuthenticationPrincipal User user) {
-        return user;
+    private UserResponse getCurrentUser(@AuthenticationPrincipal User user) {
+        return new UserResponse(user.getId(), user.getName(), user.getAge(), user.getCity());
     }
 }

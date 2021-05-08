@@ -1,33 +1,43 @@
 package com.example.SappS.controllers;
 
-import com.example.SappS.controllers.payload.JwtAuthenticationResponse;
 import com.example.SappS.controllers.payload.ServiceCreateRequest;
+import com.example.SappS.database.exceptions.AlreadyExistException;
 import com.example.SappS.database.models.Permission;
-import com.example.SappS.database.models.Service;
+import com.example.SappS.database.models.User;
 import com.example.SappS.database.services.ServiceService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.experimental.FieldDefaults;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+import java.util.Set;
 
+@Slf4j
 @RestController
+@AllArgsConstructor
 @RequestMapping("/service")
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class ServiceController {
 
-    @Autowired
-    private ServiceService serviceService;
+    ServiceService serviceService;
 
     @PostMapping("/create")
     public ResponseEntity<?> create(@RequestBody ServiceCreateRequest request) {
-        String token = serviceService.register(request.getName());
-        return ResponseEntity.ok(new JwtAuthenticationResponse(token));
+        try {
+            String token = serviceService.register(request.getName());
+            return ResponseEntity.ok(token);
+        } catch (AlreadyExistException ex) {
+            log.error(ex.getMessage(), ex);
+            return ResponseEntity.badRequest().body("Сервис с таким названием уже существует");
+        }
     }
 
     @GetMapping("/permissions")
-    public List<Permission> getServicePermissions(@AuthenticationPrincipal Service service) {
-        return service.getPermissions();
+    public Set<Permission> getServicePermissions(@RequestHeader String service, @AuthenticationPrincipal User user) {
+        return serviceService.getPermissions(service, user.getId());
     }
 
     @GetMapping("/permissions/all")
@@ -36,9 +46,9 @@ public class ServiceController {
     }
 
     @PutMapping("/permissions/add/{permission}")
-    public void addPermission(@AuthenticationPrincipal Service service, @PathVariable String permission) {
+    public void addPermission(@RequestHeader String service, @AuthenticationPrincipal User user, @PathVariable String permission) {
         Permission newPermission = Permission.valueOf(permission);
-        serviceService.addPermission(service.getId(), newPermission);
+        serviceService.addPermission(service, user.getId(), newPermission);
     }
 
 

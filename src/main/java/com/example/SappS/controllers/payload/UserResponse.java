@@ -8,8 +8,10 @@ import lombok.experimental.FieldDefaults;
 @Data
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
-public class JwtAuthenticationResponse {
+public class UserResponse {
 
-    String accessToken;
-    String tokenType = "Bearer";
+    String id;
+    String name;
+    Integer age;
+    String city;
 }

@@ -2,8 +2,10 @@ package com.example.SappS.database.repositories;
 
 import static org.springframework.data.mongodb.core.query.Criteria.where;
 
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import com.example.SappS.database.models.Message;
 import org.springframework.data.mongodb.core.query.Query;
@@ -13,10 +15,11 @@ import java.util.Optional;
 
 @Slf4j
 @Repository
+@AllArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class MessageRepository {
 
-    @Autowired
-    private MongoTemplate mongoTemplate;
+    MongoTemplate mongoTemplate;
 
     public Message save(Message message) {
         mongoTemplate.save(message);

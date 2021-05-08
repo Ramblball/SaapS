@@ -1,6 +1,9 @@
 package com.example.SappS.config.secure;
 
 import io.jsonwebtoken.*;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -11,13 +14,11 @@ import java.util.stream.Collectors;
 
 @Slf4j
 @Service
+@AllArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class JwtTokenProvider {
 
-    private final JwtConfig jwtConfig;
-
-    public JwtTokenProvider(JwtConfig jwtConfig) {
-        this.jwtConfig = jwtConfig;
-    }
+    JwtConfig jwtConfig;
 
     public String generateToken(Authentication authentication) {
         long now = System.currentTimeMillis();

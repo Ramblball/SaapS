@@ -24,8 +24,8 @@
         <appender-ref ref="ConsoleOut"/>
         <appender-ref ref="FileOut"/>
     </root>
-    <root level="DEBUG">
-        <appender-ref ref="ConsoleOut"/>
-        <appender-ref ref="FileOut"/>
-    </root>
+<!--    <root level="DEBUG">-->
+<!--        <appender-ref ref="ConsoleOut"/>-->
+<!--        <appender-ref ref="FileOut"/>-->
+<!--    </root>-->
 </Configuration>

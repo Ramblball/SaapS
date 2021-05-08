@@ -1,8 +1,10 @@
 package com.example.SappS.database.repositories;
 
 import com.example.SappS.database.models.Room;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Repository;
@@ -13,10 +15,11 @@ import static org.springframework.data.mongodb.core.query.Criteria.where;
 
 @Slf4j
 @Repository
+@AllArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class RoomRepository {
 
-    @Autowired
-    private MongoTemplate mongoTemplate;
+    MongoTemplate mongoTemplate;
 
     public Room save(Room room) {
         mongoTemplate.save(room);

@@ -1,24 +1,27 @@
 package com.example.SappS.config.secure;
 
+import lombok.AccessLevel;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 @Data
-@NoArgsConstructor
 @Component
+@NoArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class JwtConfig {
 
     @Value("${security.jwt.uri:}")
-    private String uri;
+    String uri;
     @Value("${security.jwt.header:}")
-    private String header;
+    String header;
     @Value("${security.jwt.prefix:}")
-    private String prefix;
+    String prefix;
     @Value("${security.jwt.expiration:1234}")
-    private int expiration;
+    int expiration;
     @Value("${security.jwt.secret:}")
-    private String secret;
+    String secret;
 
 }

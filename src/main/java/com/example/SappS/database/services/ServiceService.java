@@ -1,40 +1,35 @@
 package com.example.SappS.database.services;
 
-import com.example.SappS.config.secure.JwtTokenProvider;
+import static com.example.SappS.database.models.Service.UserPermission;
+
 import com.example.SappS.database.exceptions.AlreadyExistException;
 import com.example.SappS.database.exceptions.NotFoundException;
 import com.example.SappS.database.models.Permission;
 import com.example.SappS.database.models.Service;
 import com.example.SappS.database.repositories.ServiceRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.experimental.FieldDefaults;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
+@AllArgsConstructor
 @org.springframework.stereotype.Service
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class ServiceService {
 
-    @Autowired
-    private AuthenticationManager authenticationManager;
-    @Autowired
-    private JwtTokenProvider jwtTokenProvider;
-    @Autowired
-    private ServiceRepository serviceRepository;
+    ServiceRepository serviceRepository;
 
     public String register(String name) {
-        Service service = new Service(name, new ArrayList<>());
+        Service service = new Service(name, new HashSet<>());
         
         if (serviceRepository.find("name", service.getName()).isPresent()) {
             throw new AlreadyExistException();
         }
         service = serviceRepository.save(service);
-        Authentication authentication = authenticationManager
-                .authenticate(new UsernamePasswordAuthenticationToken(service.getName(), ""));
 
-        return jwtTokenProvider.generateToken(authentication);
+        return service.getId();
     }
 
     public Service findById(String id) {
@@ -47,11 +42,36 @@ public class ServiceService {
                 .orElseThrow(NotFoundException::new);
     }
 
-    public void addPermission(String id, Permission permission) {
+    public Set<Permission> getPermissions(String id, String user) {
         Service service = findById(id);
-        List<Permission> servicePermission = service.getPermissions();
-        servicePermission.add(permission);
+        Optional<UserPermission> permission = service.getUsers().
+                stream()
+                .filter(p -> p.getUser().equals(user))
+                .findFirst();
+        if (permission.isEmpty()) {
+            return new HashSet<>();
+        }
+        return permission.get().getPermissions();
+    }
 
-        serviceRepository.update("id", id, "permissions", servicePermission.toString());
+    public void addPermission(String id, String user, Permission newPermission) {
+        Service service = findById(id);
+        boolean empty = service.getUsers().
+                stream()
+                .filter(p -> p.getUser().equals(user))
+                .findFirst()
+                .isEmpty();
+        if (empty) {
+            service.getUsers().add(new UserPermission(user, new HashSet<>()));
+        }
+        Set<UserPermission> permission = service.getUsers().
+                stream()
+                .peek(p -> {
+                    if (p.getUser().equals(user)) {
+                        p.getPermissions().add(newPermission);
+                    }
+                }).collect(Collectors.toSet());
+
+        serviceRepository.update("id", id, "users", permission);
     }
 }

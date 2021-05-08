@@ -1,13 +1,13 @@
 package com.example.SappS.controllers.payload;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.Getter;
-import lombok.NonNull;
+import lombok.*;
+import lombok.experimental.FieldDefaults;
 
 @Getter
 @AllArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class LoginRequest {
-    private final String name;
-    private final String password;
+
+    String name;
+    String password;
 }

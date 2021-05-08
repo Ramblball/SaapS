@@ -3,6 +3,8 @@ package com.example.SappS.config.secure;
 import com.example.SappS.database.exceptions.NotFoundException;
 import com.example.SappS.database.models.User;
 import com.example.SappS.database.services.UserService;
+import lombok.AccessLevel;
+import lombok.experimental.FieldDefaults;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpMethod;
@@ -23,14 +25,16 @@ import javax.servlet.http.HttpServletResponse;
 
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
+    // TODO: ?
     @Autowired
-    private JwtConfig jwtConfig;
+    JwtConfig jwtConfig;
     @Autowired
-    private JwtTokenProvider jwtTokenProvider;
+    JwtTokenProvider jwtTokenProvider;
     @Autowired
-    private UserService userService;
+    UserService userService;
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
@@ -45,13 +49,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
                 .antMatchers(HttpMethod.POST, "/auth/**").permitAll()
                 .antMatchers(HttpMethod.POST, "/service/create").permitAll()
-                .antMatchers(HttpMethod.GET, "/service/permissions/all").permitAll()
-                .antMatchers("/service/**").hasAuthority("service")
-                .anyRequest().authenticated();
+                .anyRequest().hasAuthority("USER");
     }
 
     @Bean(BeanIds.AUTHENTICATION_MANAGER)
-    public AuthenticationManager authenticationManagerBean() throws Exception {
+    public AuthenticationManager authenticationManagerBean() {
         return authentication -> {
             User user = userService.findByName(authentication.getPrincipal().toString())
                     .orElseThrow(NotFoundException::new);
