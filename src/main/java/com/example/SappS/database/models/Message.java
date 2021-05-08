@@ -1,28 +1,22 @@
 package com.example.SappS.database.models;
 
-import lombok.Builder;
-import lombok.Data;
-import lombok.NonNull;
+import lombok.*;
+import lombok.experimental.FieldDefaults;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Data
-@Builder
+@NoArgsConstructor
 @Document(collection = "message")
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class Message {
 
     @Id
-    private String id;
-    @NonNull
-    private String chatId;
-    @NonNull
-    private String senderId;
-    @NonNull
-    private String receiverId;
-    @NonNull
-    private String senderName;
-    @NonNull
-    private String receiverName;
-    @NonNull
-    private String message;
+    String id;
+    String chatId;
+    String senderId;
+    String receiverId;
+    String senderName;
+    String receiverName;
+    String message;
 }

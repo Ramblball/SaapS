@@ -20,8 +20,9 @@ public class RoomService {
     }
 
     public String getChatId(String senderId, String receiverId) {
-        return roomRepository.getId(senderId, receiverId)
-                .orElseGet(() -> save(new Room(senderId, receiverId)))
-                .getId();
+        String chatId = senderId + "_" + receiverId;
+        save(new Room(chatId, receiverId, senderId));
+        save(new Room(chatId, senderId, receiverId));
+        return chatId;
     }
 }
