@@ -26,11 +26,13 @@ public class UserService {
     @Autowired
     UserRepository userRepository;
 
-    public String login(String username, String password) {
+    public Optional<String> login(String username, String password) {
         Authentication authentication = authenticationManager
                 .authenticate(new UsernamePasswordAuthenticationToken(username, password));
-
-        return jwtTokenProvider.generateToken(authentication);
+        if (authentication != null) {
+            return Optional.of(jwtTokenProvider.generateToken(authentication));
+        }
+        return Optional.empty();
     }
 
     public String register(User user) {

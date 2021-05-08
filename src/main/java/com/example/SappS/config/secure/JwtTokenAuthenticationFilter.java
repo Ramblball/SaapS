@@ -50,7 +50,7 @@ public class JwtTokenAuthenticationFilter extends OncePerRequestFilter {
                                 List<SimpleGrantedAuthority> authorities = new ArrayList<>();
                                 authorities.add(new SimpleGrantedAuthority("USER"));
                                 UsernamePasswordAuthenticationToken authenticationToken =
-                                        new UsernamePasswordAuthenticationToken(user, null, authorities);
+                                        new UsernamePasswordAuthenticationToken(user, user.getPassword(), authorities);
                                 authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(httpServletRequest));
 
                                 return authenticationToken;

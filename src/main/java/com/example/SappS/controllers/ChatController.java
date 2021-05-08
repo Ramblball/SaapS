@@ -36,8 +36,15 @@ public class ChatController {
 
         Message saved = messageService.save(message);
 
-        messagingTemplate.convertAndSendToUser(
-                message.getReceiverId(), "/queue/messages", saved);
+        if (saved.getSenderId().equals(saved.getReceiverId())) {
+            messagingTemplate.convertAndSendToUser(
+                    message.getSenderId(), "/queue/messages", saved);
+        } else {
+            messagingTemplate.convertAndSendToUser(
+                    message.getSenderId(), "/queue/messages", saved);
+            messagingTemplate.convertAndSendToUser(
+                    message.getReceiverId(), "/queue/messages", saved);
+        }
     }
 
     @GetMapping(value = "/friend/{name}")

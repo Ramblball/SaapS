@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Optional;
+
 @RestController
 @AllArgsConstructor
 @RequestMapping("/auth")
@@ -23,8 +25,11 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginRequest request) {
-        String token = userService.login(request.getName(), request.getPassword());
-        return ResponseEntity.ok(new JwtAuthenticationResponse(token));
+        Optional<String> token = userService.login(request.getName(), request.getPassword());
+        if (token.isPresent()) {
+            return ResponseEntity.ok(new JwtAuthenticationResponse(token.get()));
+        }
+        return ResponseEntity.badRequest().body("Неверный пароль");
     }
 
     @PostMapping("/registration")

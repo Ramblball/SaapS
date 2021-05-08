@@ -60,7 +60,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         return authentication -> {
             User user = userService.findByName(authentication.getPrincipal().toString())
                     .orElseThrow(NotFoundException::new);
-            return new UsernamePasswordAuthenticationToken(user.getName(), user.getPassword(), authentication.getAuthorities());
+            if (user.getPassword().equals(authentication.getCredentials())) {
+                return new UsernamePasswordAuthenticationToken(user.getName(), user.getPassword(), authentication.getAuthorities());
+            }
+            return null;
         };
     }
 
