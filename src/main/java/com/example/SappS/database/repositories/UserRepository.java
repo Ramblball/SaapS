@@ -49,10 +49,17 @@ public class UserRepository {
         log.info("User updated");
     }
 
-    public List<User> findAll(MongoOperations operations) {
+    public List<User> findAll() {
         List<User> listUser = mongoTemplate.findAll(User.class);
         listUser.forEach(u -> log.info("User: " + u));
         return listUser;
+    }
+
+    public List<User> findAllByCriteria(String criteria, String value){
+        Query query = new Query(where(criteria).is(value));
+        List<User> users = mongoTemplate.find(query, User.class);
+        users.forEach(u -> log.info("User: " + u));
+        return users;
     }
 
     public void remove(String criteria, String value) {

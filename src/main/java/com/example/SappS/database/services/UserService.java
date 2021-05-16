@@ -13,6 +13,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -48,5 +49,9 @@ public class UserService {
 
     public Optional<User> findByName(String name) {
         return userRepository.find("name", name);
+    }
+
+    public List<User> findUsersByCity(String city){
+        return userRepository.findAllByCriteria("city", city);
     }
 }
