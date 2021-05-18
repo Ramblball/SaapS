@@ -23,11 +23,4 @@ public class UserController {
     private UserResponse getCurrentUser(@AuthenticationPrincipal User user) {
         return new UserResponse(user.getId(), user.getName(), user.getAge(), user.getCity());
     }
-
-    @GetMapping(value = "/list/{city}", produces = MediaType.APPLICATION_JSON_VALUE)
-    @PreAuthorize("hasRole('USER')")
-    @ResponseStatus(HttpStatus.OK)
-    private List<User> getUsersList(@PathVariable String city) {
-        return userService.findUsersByCity(city);
-    }
 }

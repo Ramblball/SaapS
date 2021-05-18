@@ -46,8 +46,4 @@ public class UserService {
     public Optional<User> findByName(String name) {
         return userRepository.find("name", name);
     }
-
-    public List<User> findUsersByCity(String city){
-        return userRepository.findAllByCriteria("city", city);
-    }
 }

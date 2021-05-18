@@ -1,4 +1,4 @@
-package com.example.SappS.controllers;
+package com.example.SappS.controllers.services;
 
 import com.example.SappS.controllers.payload.ServiceCreateRequest;
 import com.example.SappS.database.exceptions.AlreadyExistException;
@@ -20,7 +20,7 @@ import java.util.Set;
 @AllArgsConstructor
 @RequestMapping("/service")
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
-public class ServiceController {
+public class ServiceManageController {
 
     ServiceService serviceService;
 

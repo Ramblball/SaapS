@@ -6,7 +6,9 @@ import com.example.SappS.database.exceptions.AlreadyExistException;
 import com.example.SappS.database.exceptions.NotFoundException;
 import com.example.SappS.database.models.Permission;
 import com.example.SappS.database.models.Service;
+import com.example.SappS.database.models.User;
 import com.example.SappS.database.repositories.ServiceRepository;
+import com.example.SappS.database.repositories.UserRepository;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -20,10 +22,11 @@ import java.util.stream.Collectors;
 public class ServiceService {
 
     ServiceRepository serviceRepository;
+    UserRepository userRepository;
 
     public String register(String name) {
         Service service = new Service(name, new HashSet<>());
-        
+
         if (serviceRepository.find("name", service.getName()).isPresent()) {
             throw new AlreadyExistException();
         }
@@ -73,5 +76,14 @@ public class ServiceService {
                 }).collect(Collectors.toSet());
 
         serviceRepository.update("id", id, "users", permission);
+    }
+
+    public Set<User> findUsersByCriteria(String id, String field, String value) {
+        Service service = findById(id);
+        return service.getUsers().stream()
+                .filter(userPermission -> userPermission.getPermissions().contains(Permission.LOCATION))
+                .map(userPermission ->
+                        userRepository.findByIdAndCriteria(userPermission.getUser(), field, value).orElse(null))
+                .collect(Collectors.toSet());
     }
 }
