@@ -1,11 +1,9 @@
 package com.example.SappS.config.secure;
 
-import com.example.SappS.database.exceptions.NotFoundException;
-import com.example.SappS.database.models.User;
 import com.example.SappS.database.services.UserService;
 import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -26,16 +24,13 @@ import javax.servlet.http.HttpServletResponse;
 
 @Configuration
 @EnableWebSecurity
+@AllArgsConstructor
 @EnableGlobalMethodSecurity(prePostEnabled = true)
-@FieldDefaults(level = AccessLevel.PRIVATE)
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
-    // TODO: ?
-    @Autowired
     JwtConfig jwtConfig;
-    @Autowired
     JwtTokenProvider jwtTokenProvider;
-    @Autowired
     UserService userService;
 
     @Override
@@ -49,7 +44,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .addFilterBefore(new JwtTokenAuthenticationFilter(jwtConfig, jwtTokenProvider, userService), UsernamePasswordAuthenticationFilter.class)
                 .authorizeRequests()
-                .antMatchers(HttpMethod.POST, "/auth/**").permitAll()
+                .antMatchers(HttpMethod.POST, "/auth/**").anonymous()
                 .antMatchers(HttpMethod.POST, "/service/create").permitAll()
                 .antMatchers("/ws").permitAll()
                 .anyRequest().hasAuthority("USER");
@@ -57,14 +52,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Bean(BeanIds.AUTHENTICATION_MANAGER)
     public AuthenticationManager authenticationManagerBean() {
-        return authentication -> {
-            User user = userService.findByName(authentication.getPrincipal().toString())
-                    .orElseThrow(NotFoundException::new);
-            if (user.getPassword().equals(authentication.getCredentials())) {
-                return new UsernamePasswordAuthenticationToken(user.getName(), user.getPassword(), authentication.getAuthorities());
-            }
-            return null;
-        };
+        return authentication -> new UsernamePasswordAuthenticationToken(
+                authentication.getPrincipal(),
+                authentication.getCredentials(),
+                authentication.getAuthorities());
     }
 
     @Bean
