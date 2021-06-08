@@ -5,9 +5,10 @@ import com.example.SappS.database.repositories.RoomRepository;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+@Slf4j
 @Service
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
@@ -15,8 +16,9 @@ public class RoomService {
 
     RoomRepository roomRepository;
 
-    public Room save(Room room) {
-        return roomRepository.save(room);
+    public void save(Room room) {
+        room = roomRepository.insert(room);
+        log.info("Room created: " + room.getId());
     }
 
     public String getChatId(String senderId, String receiverId) {

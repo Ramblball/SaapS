@@ -1,5 +1,6 @@
 package com.example.SappS.config.secure;
 
+import com.example.SappS.database.models.User;
 import com.example.SappS.database.services.UserService;
 import io.jsonwebtoken.Claims;
 import lombok.AccessLevel;
@@ -9,6 +10,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
+import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import javax.servlet.FilterChain;
@@ -19,6 +21,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+@Component
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class JwtTokenAuthenticationFilter extends OncePerRequestFilter {
@@ -26,7 +29,6 @@ public class JwtTokenAuthenticationFilter extends OncePerRequestFilter {
     JwtConfig jwtConfig;
     JwtTokenProvider jwtTokenProvider;
     UserService userService;
-
 
     @Override
     protected void doFilterInternal(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, FilterChain filterChain)
@@ -44,19 +46,14 @@ public class JwtTokenAuthenticationFilter extends OncePerRequestFilter {
             Claims claims = jwtTokenProvider.getClaimsFromJWT(token);
             String username = claims.getSubject();
 
-            UsernamePasswordAuthenticationToken auth =
-                    userService.findByName(username)
-                            .map(user -> {
-                                List<SimpleGrantedAuthority> authorities = new ArrayList<>();
-                                authorities.add(new SimpleGrantedAuthority("USER"));
-                                UsernamePasswordAuthenticationToken authenticationToken =
-                                        new UsernamePasswordAuthenticationToken(user, user.getPassword(), authorities);
-                                authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(httpServletRequest));
+            User user = userService.findByName(username);
 
-                                return authenticationToken;
-                            })
-                            .orElse(null);
-            SecurityContextHolder.getContext().setAuthentication(auth);
+            List<SimpleGrantedAuthority> authorities = new ArrayList<>();
+            authorities.add(new SimpleGrantedAuthority("USER"));
+            UsernamePasswordAuthenticationToken authenticationToken =
+                    new UsernamePasswordAuthenticationToken(user, user.getPassword(), authorities);
+            authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(httpServletRequest));
+            SecurityContextHolder.getContext().setAuthentication(authenticationToken);
         } else {
             SecurityContextHolder.clearContext();
         }

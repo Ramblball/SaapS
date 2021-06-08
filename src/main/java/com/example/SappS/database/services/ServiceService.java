@@ -12,10 +12,12 @@ import com.example.SappS.database.repositories.UserRepository;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
+@Slf4j
 @AllArgsConstructor
 @org.springframework.stereotype.Service
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
@@ -27,26 +29,23 @@ public class ServiceService {
     public String register(String name) {
         Service service = new Service(name, new HashSet<>());
 
-        if (serviceRepository.find("name", service.getName()).isPresent()) {
+        if (serviceRepository.findByName(service.getName()).isPresent()) {
             throw new AlreadyExistException();
         }
-        service = serviceRepository.save(service);
+        service = serviceRepository.insert(service);
+        log.info("Service created: " + service.getId());
 
         return service.getId();
     }
 
     public Service findById(String id) {
-        return serviceRepository.find("id", id)
-                .orElseThrow(NotFoundException::new);
-    }
-
-    public Service findByName(String name) {
-        return serviceRepository.find("name", name)
+        return serviceRepository.findById(id)
                 .orElseThrow(NotFoundException::new);
     }
 
     public Set<Permission> getPermissions(String id, String user) {
         Service service = findById(id);
+        log.info("Service found: " + service.getId());
         Optional<UserPermission> permission = service.getUsers().
                 stream()
                 .filter(p -> p.getUser().equals(user))
@@ -59,31 +58,30 @@ public class ServiceService {
 
     public void addPermission(String id, String user, Permission newPermission) {
         Service service = findById(id);
-        boolean empty = service.getUsers().
-                stream()
-                .filter(p -> p.getUser().equals(user))
-                .findFirst()
-                .isEmpty();
-        if (empty) {
-            service.getUsers().add(new UserPermission(user, new HashSet<>()));
+        log.info("Service found: " + service.getId());
+        Optional<UserPermission> userPermission =
+                service.getUsers()
+                        .stream()
+                        .filter(p -> p.getUser().equals(user))
+                        .findFirst();
+        if (userPermission.isEmpty()) {
+            Set<Permission> permissions = new HashSet<>();
+            permissions.add(newPermission);
+            service.getUsers().add(new UserPermission(user, permissions));
+        } else {
+            userPermission.get().getPermissions().add(newPermission);
         }
-        Set<UserPermission> permission = service.getUsers().
-                stream()
-                .peek(p -> {
-                    if (p.getUser().equals(user)) {
-                        p.getPermissions().add(newPermission);
-                    }
-                }).collect(Collectors.toSet());
-
-        serviceRepository.update("id", id, "users", permission);
+        serviceRepository.save(service);
+        log.info("Service updated: " + service.getId());
     }
 
-    public Set<User> findUsersByCriteria(String id, String field, String value) {
+    public Set<User> findUsersByCriteria(String id, String value) {
         Service service = findById(id);
+        log.info("Service found: " + service.getId());
         return service.getUsers().stream()
                 .filter(userPermission -> userPermission.getPermissions().contains(Permission.LOCATION))
                 .map(userPermission ->
-                        userRepository.findByIdAndCriteria(userPermission.getUser(), field, value).orElse(null))
+                        userRepository.findByIdAndCity(userPermission.getUser(), value).orElse(null))
                 .collect(Collectors.toSet());
     }
 }

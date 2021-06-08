@@ -1,7 +1,6 @@
 package com.example.SappS.controllers;
 
 import com.example.SappS.controllers.payload.UserResponse;
-import com.example.SappS.database.exceptions.NotFoundException;
 import com.example.SappS.database.models.Message;
 import com.example.SappS.database.models.User;
 import com.example.SappS.database.services.MessageService;
@@ -17,8 +16,6 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-
-import java.util.Optional;
 
 @Controller
 @AllArgsConstructor
@@ -49,11 +46,7 @@ public class ChatController {
 
     @GetMapping(value = "/friend/{name}")
     public ResponseEntity<?> getFriendUser(@PathVariable String name) {
-        Optional<User> friend = userService.findByName(name);
-        if (friend.isEmpty()) {
-            throw new NotFoundException("User " + name + " not found");
-        }
-        User user = friend.get();
+        User user = userService.findByName(name);
         UserResponse response = new UserResponse(user.getId(), user.getName(), user.getAge(), user.getCity());
         return ResponseEntity.ok(response);
     }

@@ -1,59 +1,9 @@
 package com.example.SappS.database.repositories;
 
 import com.example.SappS.database.models.Room;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.experimental.FieldDefaults;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;
 
-import java.util.Optional;
-
-import static org.springframework.data.mongodb.core.query.Criteria.where;
-
-@Slf4j
 @Repository
-@AllArgsConstructor
-@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
-public class RoomRepository {
-
-    MongoTemplate mongoTemplate;
-
-    public Room save(Room room) {
-        mongoTemplate.save(room);
-        log.info("Room saved");
-        log.info("room: " + room);
-        return room;
-    }
-
-    public Optional<Room> find(String criteria, String value) {
-        Query query = new Query(where(criteria).is(value));
-
-        Room result = mongoTemplate.findOne(query, Room.class);
-        if (result == null) {
-            return Optional.empty();
-        }
-        log.info("Room founded");
-        log.info("room: " + result);
-        return Optional.of(result);
-    }
-
-    public Optional<Room> getId(String firstId, String secondId) {
-        Query firstQuery = new Query(
-                where("firstId").is(firstId).and("secondId").is(secondId));
-        Query secondQuery = new Query(
-                where("firstId").is(secondId).and("secondId").is(firstId));
-        Room result = mongoTemplate.findOne(firstQuery, Room.class);
-        if (result == null) {
-            result = mongoTemplate.findOne(secondQuery, Room.class);
-            if (result == null) {
-                return Optional.empty();
-            }
-        }
-        log.info("Room founded");
-        log.info("room: " + result);
-        return Optional.of(result);
-    }
+public interface RoomRepository extends MongoRepository<Room, String> {
 }

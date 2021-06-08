@@ -1,4 +1,4 @@
-package com.example.SappS.controllers.services;
+package com.example.SappS.controllers.service;
 
 import com.example.SappS.database.models.User;
 import com.example.SappS.database.services.ServiceService;
@@ -23,6 +23,6 @@ public class ServiceApiController {
     @GetMapping(value = "/list/{field}/{value}")
     @ResponseStatus(HttpStatus.OK)
     private Set<User> getUsersList(@RequestHeader String service, @PathVariable String field, @PathVariable String value) {
-        return serviceService.findUsersByCriteria(service, field, value);
+        return serviceService.findUsersByCriteria(service, value);
     }
 }
