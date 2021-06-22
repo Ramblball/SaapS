@@ -34,22 +34,8 @@ public class ServiceManageController {
         }
     }
 
-    @GetMapping("/permissions")
-    public ResponseEntity<?> getServicePermissions(@RequestHeader String service, @AuthenticationPrincipal User user) {
-        log.info("/service/permissions GET -> " + service);
-        return ResponseEntity.ok(serviceService.getPermissions(service, user.getId()));
-    }
-
     @GetMapping("/permissions/all")
     public ResponseEntity<?> getAllPermissions() {
-        log.info("/service/permissions/all GET");
         return ResponseEntity.ok(Permission.values());
-    }
-
-    @PutMapping("/permissions/add/{permission}")
-    public void addPermission(@RequestHeader String service, @AuthenticationPrincipal User user, @PathVariable Permission permission) {
-        log.info("/permissions/add/" + permission + " -> " + service + " -> processed");
-        serviceService.addPermission(service, user.getId(), permission);
-        log.info("/permissions/add/" + permission + " -> " + service + " -> updated");
     }
 }

@@ -8,7 +8,6 @@ import com.example.SappS.database.models.Permission;
 import com.example.SappS.database.models.Service;
 import com.example.SappS.database.models.User;
 import com.example.SappS.database.repositories.ServiceRepository;
-import com.example.SappS.database.repositories.UserRepository;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -24,9 +23,9 @@ import java.util.stream.Collectors;
 public class ServiceService {
 
     ServiceRepository serviceRepository;
-    UserRepository userRepository;
+    UserService userService;
 
-    public String register(String name) {
+    public String register(String name) throws AlreadyExistException{
         Service service = new Service(name, new HashSet<>());
 
         if (serviceRepository.findByName(service.getName()).isPresent()) {
@@ -81,7 +80,7 @@ public class ServiceService {
         return service.getUsers().stream()
                 .filter(userPermission -> userPermission.getPermissions().contains(Permission.LOCATION))
                 .map(userPermission ->
-                        userRepository.findByIdAndCity(userPermission.getUser(), value).orElse(null))
+                        userService.findByIdAndCity(userPermission.getUser(), value))
                 .collect(Collectors.toSet());
     }
 }

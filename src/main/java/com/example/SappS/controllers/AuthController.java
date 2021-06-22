@@ -2,6 +2,7 @@ package com.example.SappS.controllers;
 
 import com.example.SappS.controllers.payload.JwtAuthenticationResponse;
 import com.example.SappS.controllers.payload.LoginRequest;
+import com.example.SappS.database.exceptions.AlreadyExistException;
 import com.example.SappS.database.models.User;
 import com.example.SappS.database.services.UserService;
 import lombok.AccessLevel;
@@ -34,7 +35,11 @@ public class AuthController {
 
     @PostMapping("/registration")
     public ResponseEntity<?> registration(@RequestBody User request) {
-        String token = userService.register(request);
-        return ResponseEntity.ok(new JwtAuthenticationResponse(token));
+        try {
+            String token = userService.register(request);
+            return ResponseEntity.ok(new JwtAuthenticationResponse(token));
+        } catch (AlreadyExistException ex) {
+            return ResponseEntity.badRequest().body("UserAlreadyExist");
+        }
     }
 }

@@ -3,10 +3,12 @@ package com.example.SappS.database.services;
 import com.example.SappS.config.secure.JwtTokenProvider;
 import com.example.SappS.database.exceptions.AlreadyExistException;
 import com.example.SappS.database.exceptions.NotFoundException;
+import com.example.SappS.database.models.Permission;
 import com.example.SappS.database.models.User;
 import com.example.SappS.database.repositories.UserRepository;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -14,10 +16,12 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class UserService {
 
@@ -36,7 +40,7 @@ public class UserService {
         return Optional.empty();
     }
 
-    public String register(User user) {
+    public String register(User user) throws AlreadyExistException{
         if (userRepository.findByName(user.getName()).isPresent()) {
             throw new AlreadyExistException();
         }
@@ -54,5 +58,10 @@ public class UserService {
         }
         log.info("User found: " + user);
         return user.get();
+    }
+
+    public User findByIdAndCity(String id, String value) {
+        return userRepository.findByIdAndCity(id, value)
+                .orElse(null);
     }
 }
